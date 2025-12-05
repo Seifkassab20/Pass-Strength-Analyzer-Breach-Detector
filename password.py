@@ -1,59 +1,31 @@
-import re
+import random
+import string
 
-def password_strength(password: str) -> dict:
-    score = 0
-    reasons = []
+def generate_password(length=16, use_upper=True, use_lower=True,
+                      use_numbers=True, use_symbols=True):
+    
+    upper = string.ascii_uppercase
+    lower = string.ascii_lowercase
+    numbers = string.digits
+    symbols = "!@#$%^&*()-_=+[]{};:,.<>?/"
 
-    if len(password) >= 12:
-        score += 2
-    elif len(password) >= 8:
-        score += 1
-    else:
-        reasons.append("Password is too short (minimum 8 characters).")
+    allowed_chars = ""
 
-    if re.search(r"[A-Z]", password):
-        score += 1
-    else:
-        reasons.append("Add uppercase letters.")
+    if use_upper:
+        allowed_chars += upper
+    if use_lower:
+        allowed_chars += lower
+    if use_numbers:
+        allowed_chars += numbers
+    if use_symbols:
+        allowed_chars += symbols
 
-    if re.search(r"[a-z]", password):
-        score += 1
-    else:
-        reasons.append("Add lowercase letters.")
+    if not allowed_chars:
+        raise ValueError("At least one character set must be enabled.")
 
-    if re.search(r"\d", password):
-        score += 1
-    else:
-        reasons.append("Add numbers.")
-
-    if re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
-        score += 1
-    else:
-        reasons.append("Add special characters.")
-
-    common_patterns = ["123", "password", "qwerty", "111", "abc"]
-    if any(pattern in password.lower() for pattern in common_patterns):
-        score -= 2
-        reasons.append("Password contains common weak patterns.")
-
-    if score <= 2:
-        strength = "Weak"
-    elif score <= 4:
-        strength = "Medium"
-    else:
-        strength = "Strong"
-
-    return {
-        "strength": strength,
-        "score": score,
-        "suggestions": reasons
-    }
+    password = "".join(random.choice(allowed_chars) for _ in range(length))
+    return password
 
 if __name__ == "__main__":
-    pwd = input("Enter password to analyze: ")
-    result = password_strength(pwd)
-    print("\nStrength:", result["strength"])
-    print("Score:", result["score"])
-    print("Suggestions:")
-    for s in result["suggestions"]:
-        print("-", s)
+    print("Generated Strong Password:")
+    print(generate_password(length=18, use_symbols=True, use_numbers=True))
