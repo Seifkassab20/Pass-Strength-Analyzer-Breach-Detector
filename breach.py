@@ -52,11 +52,8 @@ def check_local_breach(password: str, local_hashes: set) -> bool:
     """
     return sha1_hash(password) in local_hashes
 
-
-# ---- Your test code ---
-password = "hello123"
-count = check_hibp(password)
-print("Times found in HIBP:", count)
-
-hashes = load_local_breach_hashes("data/rockyou-hashed.txt")
-print("Local breach:", check_local_breach(password, hashes))
+def is_breached(password: str) -> bool:
+    local_hashes = load_local_breach_hashes("data/rockyou-hashed.txt")
+    hibp_count = check_hibp(password)
+    local_hit = check_local_breach(password, local_hashes)
+    return hibp_count > 0 or local_hit
